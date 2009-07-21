@@ -1,1 +1,17 @@
-Lexicu
+Lexiku
+
+Combination game between Sudoku and Scrabble.
+
+
+http://www.geocities.com/matthew_r_philip/round1-questions.html
+
+
+
+
+Built using Maven.  Please read and download to build: http://maven.apache.org/
+
+Project can be built and packaged by issuing the following command from the project's base directory if Maven is installed:
+
+mvn package
+
+The target directory should now contain the necessary .jar file.

@@ -2,9 +2,13 @@ package fungoes.lexiku;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -15,7 +19,7 @@ import java.util.Set;
  *
  */
 public class Dictionary implements Iterable<String> {
-	private Map<Integer, Set<String>> wordsBySize;
+	private Map<Integer, List<String>> wordsBySize;
 	private Set<String> words;
 	
 	// TODO analyze performance
@@ -29,22 +33,7 @@ public class Dictionary implements Iterable<String> {
 
 	private void initialize() {
 		words = new HashSet<String>();
-		wordsBySize = new HashMap<Integer, Set<String>>();
-	}
-	
-	/**
-	 * Produces a new Dictionary based on the given initial word list; assuming that all initial words are of the same given size.
-	 * 
-	 * @param size length of all initial words
-	 * @param initialWords initial word list
-	 */
-	private Dictionary(Integer size, Set<String> initialWords) {
-		this();
-		
-		if(initialWords != null) {
-			words = initialWords;
-			wordsBySize.put(size, initialWords);
-		}
+		wordsBySize = new HashMap<Integer, List<String>>();
 	}
 
 	public boolean isEmpty() {
@@ -63,22 +52,28 @@ public class Dictionary implements Iterable<String> {
 	 * @throws IOException
 	 */
 	public void loadWords(BufferedReader reader) throws IOException {
-		String word;
 		
+		String word;
 		while((word = reader.readLine()) != null) {
+			word = word.toLowerCase();
+			
 			if(!words.contains(word)) {
 				words.add(word);
-				updateWordsBySizeCounts(word);
+				updateWordsBySizeSets(word);
 			}
+		}
+		
+		for (Integer wordSize : wordsBySize.keySet()) {
+			Collections.sort(wordsBySize.get(wordSize));
 		}
 	}
 
-	private void updateWordsBySizeCounts(String word) {
+	private void updateWordsBySizeSets(String word) {
 		Integer size = new Integer(word.length());
-		Set<String> sameSizedWords = wordsBySize.get(size);
+		List<String> sameSizedWords = wordsBySize.get(size);
 		
 		if(sameSizedWords == null) {
-			sameSizedWords = new HashSet<String>(1000);
+			sameSizedWords = new ArrayList<String>(1000);
 		}
 		
 		sameSizedWords.add(word);
@@ -105,16 +100,46 @@ public class Dictionary implements Iterable<String> {
 	}
 
 	/**
-	 * Creates a new Dictionary based on the given one containing only those words of the given length
+	 * Returns an {@link Iterable} object containing references to all of the words in the dictionary with the given word length
 	 * 
-	 * @param length desired filter length
-	 * @return new Dictionary with words of the desired length
+	 * @param wordLength desired word length
+	 * @return all words matching the word length
 	 */
-	public Dictionary produceLengthFilteredDictionary(int length) {
-		// TODO rename size/length to be consistent
+	public Iterable<String> byLengthIterable(int wordLength) {
+		Collection<String> wordList = wordsBySize.get(new Integer(wordLength));
 		
-		Integer size = new Integer(length);
-		return new Dictionary(size, wordsBySize.get(size));
+		if(wordList != null) {
+			return Collections.unmodifiableCollection(wordList);
+		}
+		
+		return Collections.emptySet();
+	}
+
+	/**
+	 * Returns true if the dictionary contains a word with the given prefix (this includes if the prefix equals a word) AND the given length.
+	 * 
+	 * @param prefix word prefix or the whole word
+	 * @param wordLength length of words to search
+	 * @return true if a matching word is in the dictionary
+	 */
+	public boolean containsPrefix(String prefix, int wordLength) {
+		List<String> sizedWords = wordsBySize.get(new Integer(wordLength));
+		
+		if(sizedWords == null) {
+			return false;
+		}
+		
+		int resultIndex = Collections.binarySearch(sizedWords, prefix);
+		
+		if(resultIndex < 0) {
+			resultIndex = (resultIndex + 1) * -1;
+			
+			if(resultIndex == sizedWords.size() || !sizedWords.get(resultIndex).startsWith(prefix)) {
+				return false;
+			}
+		}
+		
+		return true;
 	}
 
 }

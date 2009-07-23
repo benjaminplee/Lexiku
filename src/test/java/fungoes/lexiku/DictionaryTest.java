@@ -36,6 +36,8 @@ public class DictionaryTest {
 		assertEquals(0, dictionary.size());
 	}
 	
+	// TODO modify api to use Reader instead of BufferedReader
+	
 	@Test
 	public void emptyInputStreamDoesNotChangeSizeOrIfEmpty() throws Exception {
 		dictionary.loadWords(new BufferedReader(new StringReader("")));

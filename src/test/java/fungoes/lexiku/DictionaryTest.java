@@ -40,7 +40,7 @@ public class DictionaryTest {
 	
 	@Test
 	public void emptyInputStreamDoesNotChangeSizeOrIfEmpty() throws Exception {
-		dictionary.loadWords(new BufferedReader(new StringReader("")));
+		dictionary.loadWords(new StringReader(""));
 		
 		assertTrue(dictionary.isEmpty());
 		assertEquals(0, dictionary.size());
@@ -48,29 +48,29 @@ public class DictionaryTest {
 	
 	@Test
 	public void loadingWordsCausesDictionaryToNotBeEmpty() throws Exception {
-		dictionary.loadWords(new BufferedReader(new StringReader(THREE_ANIMALS)));
+		dictionary.loadWords(new StringReader(THREE_ANIMALS));
 		
 		assertFalse(dictionary.isEmpty());
 	}
 	
 	@Test
 	public void loadingWordsCausesSizeToChangeFromZero() throws Exception {
-		dictionary.loadWords(new BufferedReader(new StringReader(THREE_ANIMALS)));
+		dictionary.loadWords(new StringReader(THREE_ANIMALS));
 		
 		assertEquals(3, dictionary.size());
 	}
 	
 	@Test
 	public void loadWordsIsAddative() throws Exception {
-		dictionary.loadWords(new BufferedReader(new StringReader(THREE_ANIMALS)));
-		dictionary.loadWords(new BufferedReader(new StringReader(TWO_ANIMALS)));
+		dictionary.loadWords(new StringReader(THREE_ANIMALS));
+		dictionary.loadWords(new StringReader(TWO_ANIMALS));
 		
 		assertEquals(5, dictionary.size());
 	}
 	
 	@Test
 	public void loadingTheSameWordTwiceInTheSameLoadResultsInOnlyOneEntry() throws Exception {
-		dictionary.loadWords(new BufferedReader(new StringReader("dog\ndog\ncat")));
+		dictionary.loadWords(new StringReader("dog\ndog\ncat"));
 		
 		assertEquals(2, dictionary.size());
 		assertTrue(dictionary.isWordPresent("dog"));
@@ -79,8 +79,8 @@ public class DictionaryTest {
 	
 	@Test
 	public void loadingTheSameWordTwiceFromDifferentLoadsResultsInOnlyOneEntry() throws Exception {
-		dictionary.loadWords(new BufferedReader(new StringReader("dog\ncat")));
-		dictionary.loadWords(new BufferedReader(new StringReader("dog\ncat")));
+		dictionary.loadWords(new StringReader("dog\ncat"));
+		dictionary.loadWords(new StringReader("dog\ncat"));
 		
 		assertEquals(2, dictionary.size());
 		assertTrue(dictionary.isWordPresent("dog"));
@@ -89,7 +89,7 @@ public class DictionaryTest {
 	
 	@Test
 	public void unloadedWordsAreNotPresent() throws Exception {
-		dictionary.loadWords(new BufferedReader(new StringReader(TWO_ANIMALS)));
+		dictionary.loadWords(new StringReader(TWO_ANIMALS));
 
 		assertFalse(dictionary.isWordPresent("monkey"));
 		assertFalse(dictionary.isWordPresent("goose"));
@@ -97,7 +97,7 @@ public class DictionaryTest {
 	
 	@Test
 	public void canFindLoadedWords() throws Exception {
-		dictionary.loadWords(new BufferedReader(new StringReader(THREE_ANIMALS)));
+		dictionary.loadWords(new StringReader(THREE_ANIMALS));
 		
 		assertTrue(dictionary.isWordPresent("dog"));
 		assertTrue(dictionary.isWordPresent("cat"));
@@ -115,8 +115,8 @@ public class DictionaryTest {
 			add("snake");
 		}};
 		
-		dictionary.loadWords(new BufferedReader(new StringReader(THREE_ANIMALS)));
-		dictionary.loadWords(new BufferedReader(new StringReader(TWO_ANIMALS)));
+		dictionary.loadWords(new StringReader(THREE_ANIMALS));
+		dictionary.loadWords(new StringReader(TWO_ANIMALS));
 		
 		assertThatTheIterableHasTheSameValuesAsTheGivenSet(expectedWords, dictionary);
 	}
@@ -145,14 +145,14 @@ public class DictionaryTest {
 			add("ee");
 		}};
 		
-		dictionary.loadWords(new BufferedReader(new StringReader(LETTER_WORDS)));
+		dictionary.loadWords(new StringReader(LETTER_WORDS));
 		
 		assertThatTheIterableHasTheSameValuesAsTheGivenSet(expectedWords, dictionary.byLengthIterable(2));
 	}
 	
 	@Test
 	public void wordLengthIterablesAreValidButEmptyForWordLengthsWithNoWords() throws Exception {
-		dictionary.loadWords(new BufferedReader(new StringReader(LETTER_WORDS)));
+		dictionary.loadWords(new StringReader(LETTER_WORDS));
 		
 		Iterable<String> wordsByLength = dictionary.byLengthIterable(3);
 		
@@ -162,8 +162,8 @@ public class DictionaryTest {
 	
 	@Test
 	public void dictionaryKnowsIfWordsExistWithGivenPrefix() throws Exception {
-		dictionary.loadWords(new BufferedReader(new StringReader(THREE_ANIMALS)));
-		dictionary.loadWords(new BufferedReader(new StringReader(TWO_ANIMALS)));
+		dictionary.loadWords(new StringReader(THREE_ANIMALS));
+		dictionary.loadWords(new StringReader(TWO_ANIMALS));
 		
 		assertTrue(dictionary.containsPrefix("d", 3));
 		assertTrue(dictionary.containsPrefix("do", 3));

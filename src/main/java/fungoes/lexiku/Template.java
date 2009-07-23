@@ -12,31 +12,78 @@ public class Template {
 	
 	private final int width;
 	private final int height;
-	private final char[][] template;
+	private final Tile[][] template;
+	private final List<StartingPoint> horizontalWordStartingPoints = new ArrayList<StartingPoint>();
 
 	public Template(Reader templateReader) throws IOException {
-		BufferedReader bufferedTemplate = new BufferedReader(templateReader);
-		int lineCount = 0;
-		int lineLength = -1;
+		template = buildTileTemplate(convertTemplateReaderToCharacters(new BufferedReader(templateReader)));
+		
+		width = template.length;
+		height = template[0].length;
+		
+		for(int y = 0; y < height; y++) {
+			StartingPoint point = null;
+			
+			for(int x = 0; x< width; x++) {
+				if(template[x][y] == Tile.Open) {
+					if(point == null) {
+						point = new StartingPoint(x, y, 1);
+					}
+					else {
+						point.length++;
+					}
+				}
+				else if(template[x][y] == Tile.Closed) {
+					if(point != null) {
+						horizontalWordStartingPoints.add(point);
+						point = null;
+					}
+				}
+			}
+			
+			if(point != null) {
+				horizontalWordStartingPoints.add(point);
+			}
+		}
+	}
+
+	private List<char[]> convertTemplateReaderToCharacters(
+			BufferedReader bufferedTemplate) throws IOException {
 		List<char[]> dynamicTemplate = new ArrayList<char[]>();
 		
 		String line;
 		while((line = bufferedTemplate.readLine()) != null) {
-			lineCount++;
+			dynamicTemplate.add(line.toCharArray());
+		}
+		return dynamicTemplate;
+	}
+
+	private static Tile[][] buildTileTemplate(List<char[]> dynamicTemplate) throws IOException {
+		int width = dynamicTemplate.get(0).length;
+		int height = dynamicTemplate.size();
+		int lineLength = width;
+		Tile[][] template = new Tile[width][height];
+		
+		for(int y = 0; y < height; y++) {
+			char[] characters = dynamicTemplate.get(y);
 			
-			if(line.length() != lineLength && lineLength >= 0) {
+			if(characters.length != lineLength && lineLength >= 0) {
 				throw new IOException("Line lengths must all be the same.");
 			}
 			
-			lineLength = line.length();
+			lineLength = characters.length;
 			
-			dynamicTemplate.add(line.toCharArray());
+			for(int x = 0; x< width; x++) {
+				if(characters[x] == OPEN_TILE_CHARACTER) {
+					template[x][y] = Tile.Open;
+				}
+				else {
+					template[x][y] = Tile.Closed;
+				}
+			}
 		}
 		
-		width = lineLength;
-		height = lineCount;
-		
-		template = dynamicTemplate.toArray(new char[width][height]);
+		return template;
 	}
 
 	public int getWidth() {
@@ -48,11 +95,11 @@ public class Template {
 	}
 
 	public Tile checkTile(int x, int y) {
-		if(OPEN_TILE_CHARACTER == template[x][y]) {
-			return Tile.Open;
-		}
-		
-		return Tile.Closed;
+		return template[x][y];
+	}
+
+	public List<StartingPoint> horizontalStartingPoints() {
+		return horizontalWordStartingPoints;
 	}
 
 }

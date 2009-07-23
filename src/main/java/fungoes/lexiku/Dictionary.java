@@ -2,6 +2,7 @@ package fungoes.lexiku;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -21,8 +22,6 @@ import java.util.Set;
 public class Dictionary implements Iterable<String> {
 	private Map<Integer, List<String>> wordsBySize;
 	private Set<String> words;
-	
-	// TODO analyze performance
 	
 	/**
 	 * Create a new empty Dictionary
@@ -51,10 +50,11 @@ public class Dictionary implements Iterable<String> {
 	 * @param reader containing word list, one word per line
 	 * @throws IOException
 	 */
-	public void loadWords(BufferedReader reader) throws IOException {
+	public void loadWords(Reader reader) throws IOException {
+		BufferedReader bufferedReader = new BufferedReader(reader);
 		
 		String word;
-		while((word = reader.readLine()) != null) {
+		while((word = bufferedReader.readLine()) != null) {
 			word = word.toLowerCase();
 			
 			if(!words.contains(word)) {

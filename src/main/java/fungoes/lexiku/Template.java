@@ -13,7 +13,7 @@ public class Template {
 	private final int width;
 	private final int height;
 	private final Tile[][] template;
-	private final List<StartingPoint> horizontalWordStartingPoints = new ArrayList<StartingPoint>();
+	private final List<StartingPoint> horizontalWordStartingPoints;
 
 	public Template(Reader templateReader) throws IOException {
 		template = buildTileTemplate(convertTemplateReaderToCharacters(new BufferedReader(templateReader)));
@@ -21,11 +21,48 @@ public class Template {
 		width = template.length;
 		height = template[0].length;
 		
+		horizontalWordStartingPoints = recordHorizontalStartingPoints();
+		
+		for(int x = 0; x < width; x++) {
+			int wordLength = -1;
+			
+			for(int y = 0; y < height; y++) {
+				if(template[x][y].type == TileType.Open) {
+					if(wordLength == -1) {
+						wordLength = 0;
+					}
+					
+					wordLength++;
+				}
+				else { // closed
+					if(wordLength != -1) {
+						for(int dy = 1; dy <= wordLength; dy++) {
+							template[x][y - dy].verticalWordLength = wordLength;
+						}
+						
+						wordLength = -1;
+					}
+				}
+			}
+			
+			if(wordLength != -1) {
+				for(int dy = 1; dy <= wordLength; dy++) {
+					template[x][height - dy].verticalWordLength = wordLength;
+				}
+				
+				wordLength = -1;
+			}
+		}
+	}
+
+	private List<StartingPoint> recordHorizontalStartingPoints() {
+		List<StartingPoint> points = new ArrayList<StartingPoint>();
+		
 		for(int y = 0; y < height; y++) {
 			StartingPoint point = null;
 			
 			for(int x = 0; x< width; x++) {
-				if(template[x][y] == Tile.Open) {
+				if(template[x][y].type == TileType.Open) {
 					if(point == null) {
 						point = new StartingPoint(x, y, 1);
 					}
@@ -33,18 +70,19 @@ public class Template {
 						point.length++;
 					}
 				}
-				else if(template[x][y] == Tile.Closed) {
+				else { // closed
 					if(point != null) {
-						horizontalWordStartingPoints.add(point);
+						points.add(point);
 						point = null;
 					}
 				}
 			}
 			
 			if(point != null) {
-				horizontalWordStartingPoints.add(point);
+				points.add(point);
 			}
 		}
+		return points;
 	}
 
 	private List<char[]> convertTemplateReaderToCharacters(
@@ -74,12 +112,16 @@ public class Template {
 			lineLength = characters.length;
 			
 			for(int x = 0; x< width; x++) {
+				Tile tile = new Tile();
+				
 				if(characters[x] == OPEN_TILE_CHARACTER) {
-					template[x][y] = Tile.Open;
+					tile.type = TileType.Open;
 				}
 				else {
-					template[x][y] = Tile.Closed;
+					tile.type = TileType.Closed;
 				}
+				
+				template[x][y] = tile;
 			}
 		}
 		
@@ -94,12 +136,21 @@ public class Template {
 		return height;
 	}
 
-	public Tile checkTile(int x, int y) {
-		return template[x][y];
+	public TileType checkTile(int x, int y) {
+		return template[x][y].type;
 	}
 
 	public List<StartingPoint> horizontalStartingPoints() {
 		return horizontalWordStartingPoints;
 	}
 
+	public int verticalWordLengthFor(int x, int y) {
+		return template[x][y].verticalWordLength;
+	}
+	
+	private static class Tile {
+		public TileType type = null;
+		public int verticalWordLength = 0;
+	}
+	
 }

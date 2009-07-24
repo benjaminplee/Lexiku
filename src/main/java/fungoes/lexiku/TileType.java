@@ -1,6 +1,6 @@
 package fungoes.lexiku;
 
-public enum Tile {
+public enum TileType {
 	Open,
 	Closed;
 }

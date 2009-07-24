@@ -55,20 +55,20 @@ public class TemplateTest {
 		assertEquals(4, template.getWidth());
 		assertEquals(3, template.getHeight());
 		
-		assertEquals(Tile.Open, template.checkTile(0, 0));
-		assertEquals(Tile.Open, template.checkTile(1, 0));
-		assertEquals(Tile.Open, template.checkTile(2, 0));
-		assertEquals(Tile.Open, template.checkTile(3, 0));
+		assertEquals(TileType.Open, template.checkTile(0, 0));
+		assertEquals(TileType.Open, template.checkTile(1, 0));
+		assertEquals(TileType.Open, template.checkTile(2, 0));
+		assertEquals(TileType.Open, template.checkTile(3, 0));
 		
-		assertEquals(Tile.Open, template.checkTile(0, 1));
-		assertEquals(Tile.Closed, template.checkTile(1, 1));
-		assertEquals(Tile.Closed, template.checkTile(2, 1));
-		assertEquals(Tile.Open, template.checkTile(3, 1));
+		assertEquals(TileType.Open, template.checkTile(0, 1));
+		assertEquals(TileType.Closed, template.checkTile(1, 1));
+		assertEquals(TileType.Closed, template.checkTile(2, 1));
+		assertEquals(TileType.Open, template.checkTile(3, 1));
 		
-		assertEquals(Tile.Open, template.checkTile(0, 2));
-		assertEquals(Tile.Closed, template.checkTile(1, 2));
-		assertEquals(Tile.Closed, template.checkTile(2, 2));
-		assertEquals(Tile.Open, template.checkTile(3, 2));
+		assertEquals(TileType.Open, template.checkTile(0, 2));
+		assertEquals(TileType.Closed, template.checkTile(1, 2));
+		assertEquals(TileType.Closed, template.checkTile(2, 2));
+		assertEquals(TileType.Open, template.checkTile(3, 2));
 	}
 	
 	@Test
@@ -97,5 +97,46 @@ public class TemplateTest {
 		assertEquals(new StartingPoint(6, 9, 3), startingPoints.get(13));
 	}
 	
+	@Test
+	public void singleLetterHorizontalWordsAreReturned() throws Exception {
+		Template template = new Template(new StringReader(MEDIUM_BOARD));
+		
+		List<StartingPoint> startingPoints = template.horizontalStartingPoints();
+		
+		assertEquals(6, startingPoints.size());
+		assertEquals(new StartingPoint(0, 0, 5), startingPoints.get(0));
+		assertEquals(new StartingPoint(0, 1, 1), startingPoints.get(1));
+		assertEquals(new StartingPoint(4, 1, 1), startingPoints.get(2));
+		assertEquals(new StartingPoint(0, 2, 1), startingPoints.get(3));
+		assertEquals(new StartingPoint(4, 2, 1), startingPoints.get(4));
+		assertEquals(new StartingPoint(0, 3, 5), startingPoints.get(5));
+	}
+	
+	@Test
+	public void findsVerticalWordLengthsForGivenPointsOnSmallerBoard() throws Exception {
+		Template template = new Template(new StringReader(MEDIUM_BOARD));
+		
+		assertEquals(4, template.verticalWordLengthFor(0, 0));
+		assertEquals(4, template.verticalWordLengthFor(0, 1));
+		assertEquals(4, template.verticalWordLengthFor(0, 2));
+		assertEquals(4, template.verticalWordLengthFor(0, 3));
+		assertEquals(1, template.verticalWordLengthFor(1, 0));
+		assertEquals(1, template.verticalWordLengthFor(2, 0));
+		assertEquals(1, template.verticalWordLengthFor(3, 0));
+		assertEquals(4, template.verticalWordLengthFor(4, 0));
+		assertEquals(4, template.verticalWordLengthFor(4, 1));
+		assertEquals(4, template.verticalWordLengthFor(4, 2));
+		assertEquals(4, template.verticalWordLengthFor(4, 3));
+	}
+	
+	@Test
+	public void findsVerticalWordLengthsForGivenPointsOnLargeBoard() throws Exception {
+		Template template = new Template(new StringReader(LARGE_BOARD));
+		
+		assertEquals(3, template.verticalWordLengthFor(0, 2));
+		assertEquals(10, template.verticalWordLengthFor(1, 2));
+		assertEquals(3, template.verticalWordLengthFor(0, 6));
+		assertEquals(10, template.verticalWordLengthFor(1, 6));
+	}
 	
 }

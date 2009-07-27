@@ -5,9 +5,21 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-
+/**
+ * Given dictionary and template, produce valid solved boards.
+ * 
+ * @author benjamin.lee
+ *
+ */
 public class BoardBuilder {
 
+	/**
+	 * Produce valid solved boards from the given dictionary and board template.
+	 * 
+	 * @param dictionary word list to build a board with
+	 * @param template template of all solved boards
+	 * @return list of valid boards that were found
+	 */
 	public List<String[][]> build(Dictionary dictionary, Template template) {
 
 		List<String[][]> completedBoards = new ArrayList<String[][]>();

@@ -1,10 +1,23 @@
 package fungoes.lexiku;
 
+/**
+ * Starting point for a word on a given board.
+ * 
+ * @author benjamin.lee
+ *
+ */
 public class StartingPoint {
 	public int x;
 	public int y;
 	public int length;
 	
+	/**
+	 * The starting point for a particular word.  Does not denote the word's direction.
+	 * 
+	 * @param x
+	 * @param y
+	 * @param length word length including starting point
+	 */
 	public StartingPoint(int x, int y, int length) {
 		this.x = x;
 		this.y = y;

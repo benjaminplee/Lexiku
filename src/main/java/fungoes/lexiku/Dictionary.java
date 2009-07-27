@@ -94,7 +94,6 @@ public class Dictionary implements Iterable<String> {
 	/**
 	 * Iterates over all words loaded into the dictionary in an undefined order.
 	 */
-	@Override
 	public Iterator<String> iterator() {
 		return words.iterator();
 	}

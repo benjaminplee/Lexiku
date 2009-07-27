@@ -6,6 +6,12 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Template for a board to be solved including the locations of letters and blocked spaces.
+ * 
+ * @author benjamin.lee
+ *
+ */
 public class Template {
 	public static final char OPEN_TILE_CHARACTER = 'O';
 	public static final char CLOSED_TILE_CHARACTER = 'X';
@@ -15,6 +21,13 @@ public class Template {
 	private final Tile[][] template;
 	private final List<StartingPoint> horizontalWordStartingPoints;
 
+	/**
+	 * Loads a new template from the given input.  The input data should have one row per line, 'O' for open spaces and 'X' for closed.
+	 * All lines from the reader should have the same length.
+	 * 
+	 * @param templateReader reader containing the template data
+	 * @throws IOException
+	 */
 	public Template(Reader templateReader) throws IOException {
 		template = buildTileTemplate(convertTemplateReaderToCharacters(new BufferedReader(templateReader)));
 		
@@ -128,22 +141,47 @@ public class Template {
 		return template;
 	}
 
+	/**
+	 * @return template width
+	 */
 	public int getWidth() {
 		return width;
 	}
 
+	/**
+	 * @return template height
+	 */
 	public int getHeight() {
 		return height;
 	}
 
+	/**
+	 * Finds the type of a given point in the template.
+	 * 
+	 * @param x
+	 * @param y
+	 * @return tile type
+	 */
 	public TileType checkTile(int x, int y) {
 		return template[x][y].type;
 	}
 
+	/**
+	 * Finds the {@link StartingPoint} of all horizontal words in the template.
+	 * 
+	 * @return list of starting points
+	 */
 	public List<StartingPoint> horizontalStartingPoints() {
 		return horizontalWordStartingPoints;
 	}
 
+	/**
+	 * For a given point, return the length of the vertical word it is part of. 
+	 * 
+	 * @param x
+	 * @param y
+	 * @return vertical word length
+	 */
 	public int verticalWordLengthFor(int x, int y) {
 		return template[x][y].verticalWordLength;
 	}
